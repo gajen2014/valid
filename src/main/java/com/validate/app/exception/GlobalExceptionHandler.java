@@ -3,9 +3,11 @@ package com.validate.app.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.WebExceptionHandler;
 
 import java.util.Date;
 
@@ -32,5 +34,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);
     }
 
+
+    //handling custom validation
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> customHandleException(MethodArgumentNotValidException exception){
+        ErrorDetails errorDetails = new ErrorDetails( new Date(), "Validation Error",
+                exception.getBindingResult().getFieldError().getDefaultMessage());
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
 
 }
